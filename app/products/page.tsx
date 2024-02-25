@@ -4,6 +4,8 @@ import DeleteProduct from "./deleteProduct";
 import UpdateProduct from "./updateProduct";
 const prisma = new PrismaClient();
 
+export const revalidate = 0
+
 const getProducts = async () => {
   const res = await prisma.product.findMany({
     select: {
