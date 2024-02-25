@@ -1,25 +1,27 @@
 "use client";
 import { useState } from "react";
-import { useRouter} from 'next/navigation'
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 type Product = {
-    id: number;
-    title: string;
-    price: number;
-    brandId: number;
-}
+  id: number;
+  title: string;
+  price: number;
+  brandId: number;
+};
 
 const DeleteProduct = ({ product }: { product: Product }) => {
-
   const [isOpen, setIsOpen] = useState(false);
+  const [isMutate, setIsMutate] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const handleDelete = async (productId: number) => {
-    await axios.delete(`/api/products/${productId}`)
+    setIsMutate(true);
+    await axios.delete(`/api/products/${productId}`);
+    setIsMutate(false);
     router.refresh();
-    setIsOpen(false)
+    setIsOpen(false);
   };
 
   const handleModal = () => {
@@ -34,16 +36,28 @@ const DeleteProduct = ({ product }: { product: Product }) => {
 
       <div className={isOpen ? "modal modal-open" : "modal"}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Are you sure to delete {product.title}</h3>
-   
-            <div className="modal-action">
-              <button type="button" className="btn" onClick={handleModal}>
-                No
-              </button>
-              <button type="button" onClick={() => handleDelete(product.id)} className="btn btn-primary">
+          <h3 className="font-bold text-lg">
+            Are you sure to delete {product.title}
+          </h3>
+
+          <div className="modal-action">
+            <button type="button" className="btn" onClick={handleModal}>
+              No
+            </button>
+            {!isMutate ? (
+              <button
+                type="button"
+                onClick={() => handleDelete(product.id)}
+                className="btn btn-primary"
+              >
                 Yes
               </button>
-            </div>
+            ) : (
+              <button type="button" className="btn btn-loading">
+                Deleting...
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
